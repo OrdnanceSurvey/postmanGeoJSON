@@ -3,6 +3,8 @@ A GeoJSON visual response viewer for Postman's Visualizer tool, built using [Lea
 
 This Postman plugin was written for testing Ordnance Survey APIs, which return a GeoJSON response, but it will work with any GeoJSON response from any service. It's based on the [GeoJSON Visualizer](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer) plugin, with various enhancements.
 
+Please note that this plugin is designed to work with standard CRS84 GeoJSON geometry only.
+
 ## Contributors
 - [@gold-meadow-42382](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer/overview) (Original project version)
 - [@tmnnrs](https://github.com/tmnnrs)
