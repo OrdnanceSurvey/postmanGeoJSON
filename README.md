@@ -5,6 +5,9 @@ This Postman plugin was written for testing Ordnance Survey APIs, which return a
 
 Please note that this plugin is designed to work with standard CRS84 GeoJSON geometry only.
 
+## License
+This code is shared by Ordnance Survey under the Open Government License (OGL). For more information, [click here](https://www.nationalarchives.gov.uk/doc/open-government-licence).
+
 ## Contributors
 - [@gold-meadow-42382](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer/overview) (Original project version)
 - [@tmnnrs](https://github.com/tmnnrs)
