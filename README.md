@@ -9,7 +9,7 @@ Please note that this plugin is designed to work with standard CRS84 GeoJSON geo
 This code is shared by Ordnance Survey under the Open Government License (OGL). For more information, [click here](https://www.nationalarchives.gov.uk/doc/open-government-licence).
 
 ## Contributors
-- [@gold-meadow-42382](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer/overview) (Original project version)
+- [@gold-meadow-42382](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer/overview) (Original project version) - [Click here for the GitHub repo by @alex-matthew](https://github.com/alex-mathew/Postman-GeoJSON-Visualizer-with-Fuzzy-Search).
 - [@tmnnrs](https://github.com/tmnnrs)
 - [@abiddiscombe](https://github.com/abiddiscombe)
 
