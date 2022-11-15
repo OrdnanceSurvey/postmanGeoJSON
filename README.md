@@ -55,7 +55,7 @@ let template = `
     const apiKey = '';
 
     const map = L.map('map', {
-        minZoom: 7,
+        minZoom: 1,
         maxZoom: 20,
         center: [ 50.727589, -3.541809 ],
         zoom: 6
