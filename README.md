@@ -38,7 +38,7 @@ let template = `
 </style>
 
 <div id="top">
-    <small>Request has returned <span id="js-featuresReturned"></span> unique feature(s).</small>
+    <small>Request has returned <span id="js-featuresReturned">0</span> unique feature(s).</small>
 </div>
 
 <div id="map">
