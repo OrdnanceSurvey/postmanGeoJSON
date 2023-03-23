@@ -1,107 +1,74 @@
 # postmanGeoJSON
 A GeoJSON visual response viewer for Postman's Visualizer tool, built using [Leaflet](https://leafletjs.com/).
 
-This Postman plugin was written for testing Ordnance Survey APIs, which return a GeoJSON response, but it will work with any GeoJSON response from any service. It's based on the [GeoJSON Visualizer](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer) plugin, with various enhancements.
+This Postman plugin was written for testing Ordnance Survey APIs which return a GeoJSON response, but it will work with any GeoJSON response from any service. It's based on the [GeoJSON Visualizer](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer) plugin, with enhancements and better error handling.
 
-Please note that this plugin is designed to work with standard CRS84 GeoJSON geometry only.
+*Please note that this plugin works with standard CRS84 GeoJSON only.*
 
 ## License
-This code is shared by Ordnance Survey under the Open Government License (OGL). For more information, [click here](https://www.nationalarchives.gov.uk/doc/open-government-licence).
+This code is published by Ordnance Survey under the [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence) (OGL).
 
 ## Contributors
-- [@gold-meadow-42382](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer/overview) (Original project version) - [Click here for the GitHub repo by @alex-matthew](https://github.com/alex-mathew/Postman-GeoJSON-Visualizer-with-Fuzzy-Search).
-- [@tmnnrs](https://github.com/tmnnrs)
 - [@abiddiscombe](https://github.com/abiddiscombe)
+- [@tmnnrs](https://github.com/tmnnrs)
+- [@alex-matthew (base idea)](https://github.com/alex-mathew/Postman-GeoJSON-Visualizer-with-Fuzzy-Search).
 
 ## Installation
-This plugin is designed to use the [OS Maps API](https://osdatahub.os.uk/docs/wmts/overview) to render a basemap. If you don't provide an API key where specified, the plugin will revert to OpenStreetMap tiles instead.
+This plugin is designed to use the [OS Maps API](https://osdatahub.os.uk/docs/wmts/overview) to render a basemap if you provide an API key where specified in the code. If a key is not specified, the plugin will revert to OpenStreetMap tiles instead. The OS Maps API only covers Great Britain. If you're testing the response of an geospatial API with global coverage, you're probably best to use OSM tiles.
 
-> NOTE  
-> The OS Maps API only covers Great Britain. If you're testing the response of an API with global coverage, you're probably best to use OSM tiles instead.
-
-Copy the following code into the `Tests` component of your Postman project, and change any values as required. Create a new request, click `Send`, and then set the response view to `Visualize` - a map should then load within Postman. The total number of returned features is listed at the top of the frame.
+Copy the following code into the `Tests` component of your Postman project. Create a new request, click `Send`, and then set the response view to `Visualize` - a map will load within Postman showing a visual summary of the GeoJSON response. The total number of returned features is listed at the top of the frame.
 
 ```javascript
-// postmanGeoJSON
+// Postman GeoJSON Plugin
+// https://github.com/OrdnanceSurvey/postmanGeoJSON
 
-let template = `
+const OS_MAPS_API_KEY = '' // leave blank for OSM tiles
 
-<!-- leaflet.js -->
+const template = `
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-<!-- end -->
-
 <style>
     body { margin: 0; padding: 0; height: 100vh; display: grid; grid-template-rows: auto 1fr; }
-    #top { padding: 6px; margin: 0; background: #f9f9f9; color: #333333; }
+    #top { padding: 6px; margin: 0; background: #f1f5f9; color: #1e293b; }
     #map { padding: 0; margin: 0; }
 </style>
-
-<div id="top">
-    <small>Request has returned <span id="js-featuresReturned">0</span> unique feature(s).</small>
-</div>
-
-<div id="map">
-    <noscript>
-        <p>JavaScript Required!</p>
-        <p>Please enable JavaScript to run this app.</p>
-    </noscript>
-</div>
-
+<div id="top"><small id="js-banner">Loading Response.</small></div>
+<div id="map"></div>
 <script>
-
-    // OS MAPS API KEY
-    // leave this string empty to enable OSM tiles
-    const apiKey = '';
-
-    const map = L.map('map', {
-        minZoom: 1,
-        maxZoom: 20,
-        center: [ 50.727589, -3.541809 ],
-        zoom: 6
-    });
-
-    let basemap, overlay;
-
-    if (!apiKey) {
-        basemap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const map = L.map('map', { minZoom: 1, maxZoom: 18 });
+    let apiKey = '${OS_MAPS_API_KEY}';
+    let basemap = (!apiKey)
+        ? L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        });
-    } else {
-        basemap = L.tileLayer('https://api.os.uk/maps/raster/v1/zxy/Light_3857/{z}/{x}/{y}.png?key=' + apiKey, {
+        }).addTo(map)
+        : L.tileLayer('https://api.os.uk/maps/raster/v1/zxy/Light_3857/{z}/{x}/{y}.png?key=' + apiKey, {
             maxZoom: 20,
-            attribution: 'Contains OS data © Crown copyright and database rights 2022'
-        });
-    }
-
-    basemap.addTo(map);
-
-    overlay = L.geoJSON(null, {
+            attribution: 'Contains OS data © Crown Copyright and Database Rights 2022'
+        }).addTo(map)
+    let overlay = L.geoJSON(null, {
         onEachFeature: function(feature, layer) {
             const properties = layer.feature.properties;
-            let content = '<table style="font-size:1em">';
+            let content = '<div">';
             for( let i in properties ) {
-                content += '<tr><td>' + i + '</td><td>' + properties[i] + '</td></tr>';
+                content += '<h1 style="margin-top: 4px; margin-bottom: 4px; font-size: 1.4em; font-weight: bold;">' + i + '</h1><p style="margin-top: 2px; margin-bottom: 10px; padding-bottom: 4px; border-bottom: 1px solid #eee; font-size: 1em; font-family: monospace;">' + properties[i] + '</p>';
             }
-            content += '</table>';
-            layer.bindPopup(content, { maxHeight: 300, maxWidth: 800 });
+            content += '</div>';
+            layer.bindPopup(content, { maxHeight: 300, maxWidth: 1000 });
+            layer.on({ mouseover: focusOnFeature, mouseout: resetOverlayStyle });
         },
-        style: {
-            weight: 1,
-            color: '#FF1F5B',
-            fillOpacity: 0.2
-        }
+        style: { weight: 1, color: '#FF1F5B', fillOpacity: 0.2 }
     });
-
-    pm.getData( function (error, data) {
-        overlay.addData(data.response);
-        overlay.addTo(map);
-        map.fitBounds(overlay.getBounds());
-        document.getElementById('js-featuresReturned').innerText = data.response.features.length;
+    function focusOnFeature(e) { let t = e.target; t.setStyle({ weight: 3 }); t.bringToFront() }
+    function resetOverlayStyle(e) { overlay.resetStyle(e.target) }
+    pm.getData((error, data) => {
+        if (!data.response.type) {
+            document.getElementById('js-banner').innerText = "Error Parsing Response. It might not be GeoJSON.";
+        } else {
+            overlay.addData(data.response);
+            overlay.addTo(map);
+            map.fitBounds(overlay.getBounds());
+            document.getElementById('js-banner').innerText = "Request has returned " + data.response.features.length.toString() + " unique features.";
+        }
     })
-
-</script>
-`;
-
-pm.visualizer.set(template, {response: pm.response.json()});
+</script>`; pm.visualizer.set(template, {response: pm.response.json()});
 ```
