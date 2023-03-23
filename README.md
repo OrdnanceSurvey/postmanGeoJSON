@@ -1,22 +1,16 @@
-# postmanGeoJSON
-A GeoJSON visual response viewer for Postman's Visualizer tool, built using [Leaflet](https://leafletjs.com/).
+# Postman GeoJSON Plugin
+> 🗺 A GeoJSON visual response viewer for Postman's Visualizer tool, built using [Leaflet](https://leafletjs.com/).
 
-This Postman plugin was written for testing Ordnance Survey APIs which return a GeoJSON response, but it will work with any GeoJSON response from any service. It's based on the [GeoJSON Visualizer](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer) plugin, with enhancements and better error handling.
+This Postman plugin was written for testing Ordnance Survey APIs which return a GeoJSON response, but it will work with any GeoJSON response (with WGS84 geometries) from any service. It's based on the [GeoJSON Visualizer](https://www.postman.com/gold-meadow-42382/workspace/geojson-visualizer) plugin, with enhancements and better error handling.
 
-*Please note that this plugin works with standard CRS84 GeoJSON only.*
-
-## License
-This code is published by Ordnance Survey under the [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence) (OGL).
-
-## Contributors
-- [@abiddiscombe](https://github.com/abiddiscombe)
-- [@tmnnrs](https://github.com/tmnnrs)
-- [@alex-matthew (base idea)](https://github.com/alex-mathew/Postman-GeoJSON-Visualizer-with-Fuzzy-Search).
+![Example Screenshot](./example.png)
 
 ## Installation
 This plugin is designed to use the [OS Maps API](https://osdatahub.os.uk/docs/wmts/overview) to render a basemap if you provide an API key where specified in the code. If a key is not specified, the plugin will revert to OpenStreetMap tiles instead. The OS Maps API only covers Great Britain. If you're testing the response of an geospatial API with global coverage, you're probably best to use OSM tiles.
 
-Copy the following code into the `Tests` component of your Postman project. Create a new request, click `Send`, and then set the response view to `Visualize` - a map will load within Postman showing a visual summary of the GeoJSON response. The total number of returned features is listed at the top of the frame.
+Copy the following code into the `Tests` component of your Postman request (shown with a green indicator in the above screenshot), fill out your request parameters, hit `Send`, and then set the response view to `Visualize`.
+
+A map will load in Postman showing a visual summary of the GeoJSON response. The total number of returned features is listed at the top of the frame. You can click on a feature to reveal its properties.
 
 ```javascript
 // Postman GeoJSON Plugin
@@ -72,3 +66,11 @@ const template = `
     })
 </script>`; pm.visualizer.set(template, {response: pm.response.json()});
 ```
+
+## License
+This code is published by Ordnance Survey under the [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence) (OGL).
+
+## Contributors
+- [@abiddiscombe](https://github.com/abiddiscombe)
+- [@tmnnrs](https://github.com/tmnnrs)
+- [@alex-matthew (base idea)](https://github.com/alex-mathew/Postman-GeoJSON-Visualizer-with-Fuzzy-Search).
